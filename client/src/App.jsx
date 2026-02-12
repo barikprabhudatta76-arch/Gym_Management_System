@@ -9,6 +9,8 @@ import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Login from './pages/public/Login';
+import Attendance from './pages/public/Attendance';
+
 import Register from './pages/public/Register';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -17,14 +19,17 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './route/ProtectedRoute';
 import PublicRoute from './route/PublicRoute';
 
+
 function App() {
   return (
     <Routes>
       {/* Public Routes with Main Layout */}
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Home/>} />
         <Route path="about" element={<About />} />
-        
+          <Route path="Attendance" element={<Attendance />} />
+
+         
         {/* Only accessible if NOT logged in */}
         <Route 
           path="login" 
