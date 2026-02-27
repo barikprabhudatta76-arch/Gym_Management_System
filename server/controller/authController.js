@@ -56,8 +56,8 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check for user email
-    const user = await User.findOne({ email });
+    // Find the user and populate their plan
+    const user = await User.findOne({ email }).populate("plan");
 
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
@@ -65,10 +65,11 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan || null, // include plan details if booked
         token: generateToken(user.id, user.role),
       });
     } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -89,16 +90,35 @@ const logoutUser = (req, res) => {
 // @access  Private
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').populate("plan");
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    // Optional: Ensure only admins can access
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const users = await User.find()
+      .select('-password')       // Exclude passwords
+      .populate("plan");         // Include booked plan details if any
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   getMe,
+  getAllUsers
 };

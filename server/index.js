@@ -16,9 +16,13 @@ app.use(express.json());
 
 // Routes
 const authRoutes = require('./route/authRoutes');
+const memberRoutes = require('./route/memberRoutes');
+const planRoutes = require('./route/planRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
+app.use("/api/members", memberRoutes);
+app.use("/api/plans", planRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
